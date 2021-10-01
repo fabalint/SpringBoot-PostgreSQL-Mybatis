@@ -1,0 +1,168 @@
+Expectations:
+	Please create a new Java EE application to implement the following scenarios.
+		We do not need web project but please implement the backend layer with unit tests to fulfill the given requirements
+		Use Spring as a framework to implement business logic
+		Use MyBatis or Spring Data as Persistence layer (The database has to be an RDBMS system (Postgres, MySQL, Oracle))
+		Use Design Patterns during the implementation
+		Implement Unit tests (optional)
+		Any other common library are free to use
+	During the code review we are going to check the implementation style (reusability, code cleanness and understandability). The goal is not to finish every piece of requirement but the style and mode you implement them.
+	The Unit Tests are necessary to make sure every business case is implemented and works well.
+
+Story:
+	There is a company and they are going to start a new promotion campaign for the following Euro Cup 2020. The campaign is the customers who buy a bottle of their product. Every product has a unique code. When a customer enters a code there is a chance to win a brand new Euro Cup Ball from the Company.
+
+Backend to support our company to select winners and loser in this competition
+User
+	Users should provide and email address which is valid and unique in out system
+	User will provide every necessary information about the delivery and their personal data
+	Terms & Conditions -> under 13 is not permitted
+	User is able to enter a valid coupon code
+Territory
+	Our company is a quite big world wild company and there are several Territories where this campaign will go on
+	Every Territory has own conditions about to select the winner
+	We are going to support 2 Territories
+		Germany
+			Every 40th coupon sender wins
+			Maximum 10.000 Balls they have
+			Maximum 250 ball winners a day
+		Hungary
+			Every 80th coupon sender wins
+			Maximum 5.000 balls they have
+			Maximum 100 ball winners a day
+Select the winners
+	When a user enters their data they will also provide the territory
+	We should check the coupon code if it is valid (still valid)
+		validation rule: Coupon is 10 characters length
+		Coupon was not redeemed yet
+		(Every coupon is acceptable for now)
+	Redeem the coupon
+		Check the territory conditions and check whether the user is winner or not
+		Make sure there can be several user attempts in a small period of time
+		Create a service where we would like to see: the winner coupon codes and the email address of the winners grouped by the territory. The service has to support pagination and date period filtering.
+Implement Unit Tests
+	Check business rules for coupons, users, territories
+	Check winner rules
+	Check parallel attempts of coupon usage
+
+
+- A unit-tesztek opcionalisak, vagy szuksegesek? (vagy, eleg a vaz, hogy mit tesztelnek le veluk, es a metodus belseje opcionalis/javadoc?)
+- Opcionális 100%ban lefedni tesztekkel a kódot. A legfontosabb hogy a beváltásra legyen unit teszt, ahol mondjuk több user próbálkozik párhuzamosan a többi opcionális.
+
+- A kulonbozo technologiak ossze-konfiguralasa is erdekes, azaz leirando java/xml/... szinten, vagy eleg egy mellekelt dokumentacioban/leirasban? (pld. mybatis DB-init script, DB-elero configok, ...) (code convention leiras van e esetleg, ha? (: )
+- Java/xml... szinten elég a konfiguráció nem szükséges külön dokumentáció. A beadott feladat dokumentálása opcionális.
+
+- Abbol kiindulva, hogy europa, magyarorszag, nemetorszag, ugy sejtem hogy a '10 karakter' keppen definialt kupon-kod valoszinuleg angol nagybetuk+szamok, es hogy a kinai karakterek nincsenek benne (unicode char?), es hogy nem is ascii 0..255, de azert szivesebben lennek biztosabb ebben.
+- Jó lesz angol nagybetűk és számok, nem különösebben lényeges. A fontos a validáció.
+	
+- A felhasznalo hazhozszallitasi adatait jol gondolom, hogy eleg a nyertesektol elkerni/elmenteni (aki legalabb egyszer nyert...) ? Eleg egy mezo (a pelda miatt..) vagy a cim a felbontasa is erdekes DB szinten?
+- Amikor valaki regisztrál kötelező a címet megadni. Ez történhet vagy kupon beváltásával vagy külön is, nem számít nekünk. A cím felbontását rádbízzuk, ahogy jobbnak érzed egy címet kezelni adatbázisban.
+	
+- Csak egyszer nyerhet valaki, egy email-cimmel?
+- Egy ember egy email címmel többször is nyerhet. Amikor elküldi a kupont és még nincs ilyen user akkor lehet az egy regisztráció, de az is lehet hogy külön kell előtte regisztrálni. Nekünk mind a két eset elfogadható. 
+	
+- Peldaul magyarorszagon, ha megvan az adott napi 100 nyertes, akkor a tovabbi probalkozok kuponjai (emailjei..) felhasznaltnak szamitanak vagy pedig masnap probalkozhatnak ujra?
+- Folyamatosan próbálkozhatnak, attól még hogy nyert akár nyerhet megint aznap is de csak a megadott országban, mert az a regisztrációkor eldől.
+- A kerdesem inkabb arra iranyult, hogy:
+ ha egy adott napon, (peldanak) magyarorszagon, mar 80*100 azaz 8000 kupon bevaltasra kerult,
+ azaz megvan mar a 100 nyertes az adott napra,
+ akkor aznap:
+		a napi maximum nyertesszamon tuli probalkozok kuponjai felhasznaltnak minosulnek e?
+	vagy:
+		a napi maximum nyertesszamon tuli probalkozok azt a valaszt kapjak hogy kerep probalja holnap?
+- Ahogy szeretnéd, max rákérdezünk a másikra hogy azt hogyan oldottad volna meg.
+	
+- Virtualizacios megoldast hasznal esetleg a megrendelo ceg (aws, autoscale, docker service..) ? vagy fix szamu szerveruk van? (java kiszolgalo es DB kiszolgalo is erdekes)
+- Az alkalmazásnak 1 szerveren és 1 db db vel kell tudnia futni. Minden egyéb opcionális. Ha valamit clusterben is tudunk futtatni annak szoktunk örülni. 
+
+- javaEE es Spring lett emlitve, igy pontositanek, hogy (esetleg mar meglevo.. (: ) tomcat/glassfish/... -ek futnanak alatta, vagy spring-boot is megfelelo?
+- Nincs megkötve, Ahogy jobb megoldást tudsz adni, vagy amit úgy érzel hogy jelenleg te ezt ajánlanád.
+
+- A kapcsolodo halozati infrastruktura mennyire keplekeny, vagy letezo, peldaul tuzfal (pld ddos vedelem..), load-balancer (-retegek), ..? (esetleg jo egy leiras arrol hogy mit feltetelezek?)
+- Nem lényeges a hálózati infrastruktúra. Egy webes alkalmazás fog kommunikálni egy DB-vel. Az hogy a devops mit rak eléjük és közéjük az nem érdekes a feladatban. A webes alkalmazás végeredménye lehet egy WAR, egy docker image, amit te a legjobbnak gondolsz.
+- Ahogy gondolod, hogy egy backend rétegnek működnie kellene. Ha úgy gondolod hogy DDOS támadás ellen meg kell védeni egy backend alkalmazást, akkor védd meg stb.
+
+- Ez egy olyan backend, ami frontend szervereket szolgal ki, vagy klienseket (app-ok, web-ui, ...)? vagy vegyesen? (azaz, van e elotte meg egy reteg, ami pld. auth, lokalizacio, ... kerdeskort megoldja?)
+- Ez egy olyan backend ami REST hívásokat tud fogadni. Jelenleg nem cél teljeskörű authentikáció és authorizációt kezelni. 
+
+- Elozo kerdeshez kapcsolva, a 13+ os felhasznalok esetleg mar 'kiszurodnek' a feluleti/frontend logika altal, vagy szukseges azt is elmenteni hogy bepipaltak?
+- Rád bízzuk az eldöntését hogy ezt hogy lenne jobb kezelni.
+
+- REST-controller megfelelo e?
+- REST controller megfelelő
+
+- Minthogy ez egy szerencsejatek szeru oldal, es sorsolas is, a bekuldesnel es (nemetorszagban) a 40. kivalasztasanal melyik idopont szamit? pld, request header-beli, vagy 'gui-controller' oldali, vagy backend-oldali, vagy az adatrogzites kori (db-be iras), vagy mas? 
+- Rád bízzuk az eldöntését hogy melyik időpont megfelelő.
+
+- A bekuldo rogton ertesul, a kupon-bekuldes response-aban, hogy nyert, vagy pedig email-ben, esetleg nap vegen batch-es select+kikuldessel?
+- Rád bízzuk azt hogy értesüljön a felhasználó arról hogy nyert.
+
+
+
+
+
+dm
+	coupon: angol nagybetűk és számok
+
+tesztek
+	a beváltásra legyen unit teszt, ahol mondjuk több user próbálkozik párhuzamosan
+	Check business rules for coupons, users, territories
+	Check winner rules
+	Check parallel attempts of coupon usage
+
+pre-regisztracio, aztan bevaltas
+	akár nyerhet megint aznap is de csak a megadott országban, mert az a regisztrációkor eldől.
+
+
+controller:
+	User regisztracio
+		vazlat, validacio..
+		POST /user/v1/register/v1
+		{
+			name [ first last mid? ]
+			email
+			territory // kulon vennem, mert nem biztos hogy ugyanaz mint az orszag: pld EMEA, vagy california.. 
+			address [ name street city county? country postal-code delivery-notes ... ]
+		}
+		=>
+		{
+			status-code
+			status-data{...}
+			message[{code text?}]
+			validation[{form? field? msgcode}]
+			ui-data{...}
+		}
+	Kupon bevaltasra
+		POST /coupon/v1/redeem/v1
+		{
+			uu?id (===email)
+			coupon []?
+		}
+		=> 
+		{
+			status-code
+			status-data{...}
+			message[{code text?}]
+			validation[{form? field? msgcode}]
+			ui-data{...}
+		}
+	Eredmeny-lekerdezes (belso..)
+		GET /coupon/v1/result/v1
+		{
+			page		dft 0 (1st)
+			page-size	dft 25?
+			date-from	dft today
+			date-to		dft today
+		}
+		=> 
+		{
+			status-code
+			status-data{...}
+			message[{code text?}]
+			validation[{form? field? msgcode}]
+			ui-data{...}
+		}
+
+
+
+

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.campaign.coupon.mapper.v1.CouponMapper">
+
+	<select id="redeemCoupon" resultType="com.example.campaign.coupon.dao.api.v1.dto.CouponRedeemResultDaoBean">
+		select
+			resultcode,
+			success,
+			retryable
+		from
+			cmp_redeem_coupon(
+				#{territory},
+				#{couponCode},
+				#{userId}
+			) 
+	</select>
+</mapper>

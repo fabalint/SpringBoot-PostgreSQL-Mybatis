@@ -1,15 +1,32 @@
 server:
   servlet:
-    context-path: /PostgreSQL
-  port: 8080
-  
+    context-path: /eurocup2020
+  port: 8123
+
 spring:
   datasource:
-    url: jdbc:postgresql://192.168.11.12:5432/1912
-    username: postgres
-    password: 123456
+    username: masteruser
+    password: masteruser_local
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/application_db
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 80
+  flyway:
+      baselineOnMigrate: true
 
 mybatis:
-  type-aliases-package: com.banmajio.bean
-  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath:**/mapper/**/*Mapper.xml
+
+config:
+  feature:
+  business:
+    territory:
+      de:
+        autowinByOrder: 40
+        maxWinners: 10000
+        dailyMaxWinners: 250
+      hu:
+        autowinByOrder: 40
+        maxWinners: 10000
+        dailyMaxWinners: 250

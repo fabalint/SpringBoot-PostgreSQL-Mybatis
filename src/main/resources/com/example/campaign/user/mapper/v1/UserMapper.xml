@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.campaign.user.mapper.v1.UserMapper">
+	<select id="getUser" resultType="com.example.campaign.user.dao.api.v1.dto.UserDaoBean">
+		select
+			userid,
+			territory,
+			name,
+			address
+		from
+			campaign_users
+		where
+			userid = #{userId} 
+	</select>
+	<!-- userid should come from a sequence, or uuid, or.. -->
+	<insert id="insertUser" parameterType="com.example.campaign.user.dao.api.v1.dto.UserDaoBean">
+		insert into
+		campaign_users (
+			userId,
+			territory,
+			name,
+			address
+		) values (
+			#{user.userId},
+			#{user.territory},
+			#{user.name},
+			#{user.address}
+		)
+	</insert>
+	
+</mapper>
